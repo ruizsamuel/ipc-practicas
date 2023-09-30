@@ -2,9 +2,12 @@ package practica2;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Slider;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
 import java.net.URL;
@@ -14,9 +17,36 @@ public class MoverCirculoController implements Initializable {
 
     @FXML
     private Circle circulo;
+    private double xOffset, yOffset;
+
+    @FXML
+    private GridPane grid;
+
+    private boolean circuloFill = true;
+
+    @FXML
+    private ColorPicker colorPicker;
+    private Color color = Color.RED;
+
+    @FXML
+    private Slider sizeSlider;
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) { }
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        circulo.radiusProperty().bind(sizeSlider.valueProperty());
+        sizeSlider.valueProperty().addListener((observable, oldValue, newValue) -> circulo.requestFocus());
+
+        colorPicker.valueProperty().addListener((observable, oldValue, newValue) -> {
+            color = newValue;
+            if (circuloFill) circulo.setFill(color);
+            else circulo.setStroke(color);
+        });
+
+        circulo.setOnMousePressed((MouseEvent e) -> {
+            xOffset = e.getSceneX();
+            yOffset = e.getSceneY();
+        });
+    }
 
     @FXML
     private void handleMousePressed(MouseEvent e) {
@@ -26,6 +56,24 @@ public class MoverCirculoController implements Initializable {
 
         GridPane.setColumnIndex(circulo, col);
         GridPane.setRowIndex(circulo, row);
+    }
+
+    @FXML
+    private void handleMouseDragged(MouseEvent e) {
+        circulo.setTranslateX(e.getSceneX() - xOffset);
+        circulo.setTranslateY(e.getSceneY() - yOffset);
+    }
+
+    @FXML
+    private void handleMouseDraggedExit(MouseEvent e) {
+        circulo.setTranslateX(0);
+        circulo.setTranslateY(0);
+        int col = GridUtils.columnCalc(grid, e.getSceneX());
+        int row = GridUtils.rowCalc(grid, e.getSceneY());
+
+        GridPane.setColumnIndex(circulo, col);
+        GridPane.setRowIndex(circulo, row);
+        e.consume();
     }
 
     @FXML
@@ -45,5 +93,16 @@ public class MoverCirculoController implements Initializable {
 
         GridPane.setRowIndex(circulo, GridUtils.rowNorm(grid, GridPane.getRowIndex(circulo) + move[1]));
         GridPane.setColumnIndex(circulo, GridUtils.columnNorm(grid,GridPane.getColumnIndex(circulo) + move[0]));
+    }
+    @FXML
+    private void handleToggleFill() {
+        circuloFill = !circuloFill;
+        if (circuloFill) {
+            circulo.setFill(color);
+            circulo.setStroke(Color.BLACK);
+        } else {
+            circulo.setFill(Color.TRANSPARENT);
+            circulo.setStroke(color);
+        }
     }
 }
