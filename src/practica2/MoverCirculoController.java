@@ -26,7 +26,6 @@ public class MoverCirculoController implements Initializable {
 
     @FXML
     private ColorPicker colorPicker;
-    private Color color = Color.RED;
 
     @FXML
     private Slider sizeSlider;
@@ -37,9 +36,8 @@ public class MoverCirculoController implements Initializable {
         sizeSlider.valueProperty().addListener((observable, oldValue, newValue) -> circulo.requestFocus());
 
         colorPicker.valueProperty().addListener((observable, oldValue, newValue) -> {
-            color = newValue;
-            if (circuloFill) circulo.setFill(color);
-            else circulo.setStroke(color);
+            if (circuloFill) circulo.setFill(newValue);
+            else circulo.setStroke(newValue);
         });
 
         circulo.setOnMousePressed((MouseEvent e) -> {
@@ -98,11 +96,11 @@ public class MoverCirculoController implements Initializable {
     private void handleToggleFill() {
         circuloFill = !circuloFill;
         if (circuloFill) {
-            circulo.setFill(color);
+            circulo.setFill(circulo.getStroke());
             circulo.setStroke(Color.BLACK);
         } else {
+            circulo.setStroke(circulo.getFill());
             circulo.setFill(Color.TRANSPARENT);
-            circulo.setStroke(color);
         }
     }
 }
