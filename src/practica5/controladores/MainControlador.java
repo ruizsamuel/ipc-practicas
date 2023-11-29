@@ -65,7 +65,6 @@ public class MainControlador implements Initializable {
     }
 
     private void inicializarBindings() {
-
         BooleanBinding elementoSeleccionado = Bindings.equal(personasTableV.getSelectionModel().selectedIndexProperty(), -1);
         modificarButton.disableProperty().bind(elementoSeleccionado);
         borrarButton.disableProperty().bind(elementoSeleccionado);
@@ -97,6 +96,7 @@ public class MainControlador implements Initializable {
     }
 
     /* Handlers */
+
     EventHandler<ActionEvent> addHandler = (e) -> {
         personaControlador.setPersona(null);
         personaVentana.showAndWait();
